@@ -1,0 +1,6 @@
+title New note SPA
+note over browser:
+user types input, clicks on the save button
+end note
+browser->server: HTTP POST /exampleapp/new_note_spa
+server-->browser: {"message":"note created"}
