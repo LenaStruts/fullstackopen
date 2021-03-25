@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
 const Statistic = ({ text, value }) => (
-  <div>
-    <p>{text} {value}</p>
-  </div>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 )
 
 const Statistics = ({ text, value }) => {
@@ -15,14 +16,16 @@ const Statistics = ({ text, value }) => {
     )
   }
   return (
-    <div>
-      <Statistic text={text[0]} value={value[0]} />
-      <Statistic text={text[1]} value={value[1]} />
-      <Statistic text={text[2]} value={value[2]} />
-      <Statistic text={text[3]} value={value[3]} />
-      <Statistic text={text[4]} value={value[4]} />
-      <Statistic text={text[5]} value={`${value[5]} %`} />
-    </div>
+    <table>
+      <tbody>
+        <Statistic text={text[0]} value={value[0]} />
+        <Statistic text={text[1]} value={value[1]} />
+        <Statistic text={text[2]} value={value[2]} />
+        <Statistic text={text[3]} value={value[3]} />
+        <Statistic text={text[4]} value={value[4]} />
+        <Statistic text={text[5]} value={`${value[5]} %`} />
+      </tbody>
+    </table>
   )
 }
 
