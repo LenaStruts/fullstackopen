@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-const Statistics = ({ text, feedback }) => (
+const Statistics = ({ data, value }) => (
   <div>
-    <p>{text} {feedback}</p>
+    <p>{data} {value}</p>
   </div>
 )
 
@@ -17,17 +17,25 @@ const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
-
+  const [allClicks, setAll] = useState([])
+  
   const handleGoodClick = () => {
+    setAll(allClicks.concat(1));
     setGood(good + 1);
   }
   const handleNeutralClick = () => {
+    setAll(allClicks.concat(0));
     setNeutral(neutral + 1);
   }
 
   const handleBadClick = () => {
+    setAll(allClicks.concat(-1));
     setBad(bad + 1);
   }
+
+  const average = arr => (arr.length === 0) ? 0 : arr.reduce((acc, CV) => (acc + CV)) / arr.length;
+
+  const percentage = (positive, all) => (all.length === 0) ? 0 : (positive * 100) / all.length;
 
   return (
     <div>
@@ -36,9 +44,12 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text='neutral' />
       <Button handleClick={handleBadClick} text='bad' />
       <h1>statistics</h1>
-      <Statistics text='good' feedback={good} />
-      <Statistics text='neutral' feedback={neutral} />
-      <Statistics text='bad' feedback={bad} />
+      <Statistics data='good' value={good} />
+      <Statistics data='neutral' value={neutral} />
+      <Statistics data='bad' value={bad} />
+      <Statistics data='all' value={allClicks.length} />
+      <Statistics data='average' value={average(allClicks)} />
+      <Statistics data='positive' value={`${percentage(good, allClicks)} %`} />
     </div>
   )
 }
