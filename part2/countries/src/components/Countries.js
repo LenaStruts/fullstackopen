@@ -1,18 +1,21 @@
 import React from 'react'
 import Country from './Country'
 
-const Countries = ({ countries }) => {
-    const country = countries[0]
-    if (countries.length === 1) {
+const Countries = (props) => {
+    const country = props.countries[0]
+    if (props.countries.length === 1) {
         return (
             <Country country={country} />
         ) 
-    } else if (countries.length <= 10) {
+    } else if (props.countries.length <= 10) {
         return (
             <ul>
-                {countries.map(country => 
+                {props.countries.map(country => 
                 <li key={country.alpha3Code}>
-                    {country.name}
+                    {country.name}  
+                    <button value={country.name} onClick={props.handleFiltering}>
+                        show
+                    </button>
                 </li>
                 )}
             </ul>
