@@ -5,12 +5,20 @@ import Countries from './components/Countries'
 const App = () => {
   const [ countries, setCountries ] = useState([])
   const [ filteredResults, setFilteredResults ] = useState('')
+  const [ loading, setLoading ] = useState(true)
+  const [ error, setError ] = useState()
 
   useEffect(() => {
     axios
       .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
         setCountries(response.data)
+      })
+      .catch(error => {
+        setError(error)
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }, [])
 
@@ -22,11 +30,19 @@ const App = () => {
   ? countries.filter(country => country.name.toLowerCase().includes(filteredResults.toLowerCase()) === true) 
   : countries
 
+  if (!loading) {
+    return !error ? (
+      <div>
+        find countries <input value={filteredResults} onChange={handleFiltering} />
+        <Countries countries={countriesToShow} handleFiltering={handleFiltering} />
+      </div>
+    )
+    : (
+        <p>Some error occurred, while fetching api</p>
+    )
+  } 
   return (
-    <div>
-      find countries <input value={filteredResults} onChange={handleFiltering} />
-      <Countries countries={countriesToShow} handleFiltering={handleFiltering} />
-    </div>
+      <p>Loading...</p>
   )
 }
 
