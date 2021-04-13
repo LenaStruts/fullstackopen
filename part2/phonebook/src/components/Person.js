@@ -1,16 +1,20 @@
 import React from 'react'
 
-const Person = ({ person }) => {
+const Person = (props) => {
     return (
-      <p>{person.name} {person.number}</p>
+      <p>{props.name} {props.number} <button onClick={props.removePerson}>delete</button></p>
     )
   }
 
-const Persons = ({ persons }) => {
+const Persons = (props) => {
     return (
         <>
-            {persons.map(person => 
-                <Person key={person.id} person={person} />
+            {props.persons.map(person => 
+                <Person 
+                    key={person.id} 
+                    name={person.name}
+                    number={person.number} 
+                    removePerson={() => props.removePerson(person.id)} />
             )}
         </>
     )

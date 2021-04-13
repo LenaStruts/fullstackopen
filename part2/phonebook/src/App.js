@@ -9,6 +9,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filteredResults, setFilteredResults ] = useState('')
+  const [ error, setError ] = useState()
 
   useEffect(() => {
     personService
@@ -38,6 +39,20 @@ const App = () => {
     }
   }
 
+  const removePerson = id => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+      .catch(error => {
+        setError(error)
+      })
+    }
+  }
+
   const handleNameChange = (event) => {
       setNewName(event.target.value)
   }
@@ -63,7 +78,7 @@ const App = () => {
       inputName={newName} nameUpdate={handleNameChange} 
       inputNum={newNumber} numUpdate={handleNumberChange} />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} removePerson={removePerson} err={error} />
     </div>
   )
 }
