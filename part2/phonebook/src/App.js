@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Person'
 
@@ -9,6 +10,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filteredResults, setFilteredResults ] = useState('')
+  const [ message, setMessage] = useState(null)
   const [ error, setError ] = useState()
 
   useEffect(() => {
@@ -25,6 +27,7 @@ const App = () => {
     if (index !== -1) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         changeNumber(persons[index].id)
+        handleMessage(`Updated number for ${newName}`)
       }
     } else {
       const nameObject = {
@@ -35,6 +38,7 @@ const App = () => {
       .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          handleMessage(`Added ${nameObject.name}`)
           setNewName('')
           setNewNumber('')
         })
@@ -80,6 +84,12 @@ const App = () => {
     setFilteredResults(event.target.value)
   }
 
+  const handleMessage = (message) => {
+    setMessage(message)
+    setTimeout(() => setMessage(null), 2000)
+  }
+
+
   const personsToShow = filteredResults
   ? persons.filter(person => person.name.toLowerCase().includes(filteredResults.toLowerCase()) === true) 
   : persons
@@ -87,6 +97,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter inputText={filteredResults} filterUpdate={handleFiltering} />
       <h3>add a new</h3>
       <PersonForm add={addPerson} 
