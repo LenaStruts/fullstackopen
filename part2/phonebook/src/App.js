@@ -23,7 +23,9 @@ const App = () => {
     event.preventDefault()
     let index = persons.findIndex(person => person.name === newName)
     if (index !== -1) {
-      window.alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        changeNumber(persons[index].id)
+      }
     } else {
       const nameObject = {
         name: newName,
@@ -51,6 +53,19 @@ const App = () => {
         setError(error)
       })
     }
+  }
+
+  const changeNumber = id => {
+    const person = persons.find(person => person.id === id)
+    const changedPerson = { ...person, number: newNumber }
+    
+    personService
+    .update(id, changedPerson).then(returnedPerson => {
+      setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+    })
+    .catch(error => {
+      setError(error)
+    })
   }
 
   const handleNameChange = (event) => {
