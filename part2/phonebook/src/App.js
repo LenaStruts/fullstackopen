@@ -6,12 +6,12 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Person'
 
 const App = () => {
-  const [ persons, setPersons ] = useState([]) 
-  const [ newName, setNewName ] = useState('')
-  const [ newNumber, setNewNumber ] = useState('')
-  const [ filteredResults, setFilteredResults ] = useState('')
-  const [ message, setMessage] = useState(null)
-  const [ error, setError ] = useState()
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filteredResults, setFilteredResults] = useState('')
+  const [error, setError] = useState()
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -27,7 +27,9 @@ const App = () => {
     if (index !== -1) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         changeNumber(persons[index].id)
-        handleMessage(`Updated number for ${newName}`)
+        setMessage(message)
+        setTimeout(() => setMessage(null), 2000)
+        handleMessage({ text: `Updated number for ${newName}`, type: 'message' })
       }
     } else {
       const nameObject = {
@@ -35,10 +37,10 @@ const App = () => {
         number: newNumber
       }
       personService
-      .create(nameObject)
+        .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          handleMessage(`Added ${nameObject.name}`)
+          handleMessage({ text: `Added ${nameObject.name}`, type: 'message' })
           setNewName('')
           setNewNumber('')
         })
@@ -49,31 +51,35 @@ const App = () => {
     const person = persons.find(person => person.id === id)
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
-      .remove(id)
-      .then(() => {
-        setPersons(persons.filter(person => person.id !== id))
-      })
-      .catch(error => {
-        setError(error)
-      })
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          setError(error)
+          handleMessage({ text: `Information of ${person.name} has already been removed from server`, type: 'error' })
+          setPersons(persons.filter(person => person.id !== id))
+        })
     }
   }
 
   const changeNumber = id => {
     const person = persons.find(person => person.id === id)
     const changedPerson = { ...person, number: newNumber }
-    
+
     personService
-    .update(id, changedPerson).then(returnedPerson => {
-      setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
-    })
-    .catch(error => {
-      setError(error)
-    })
+      .update(id, changedPerson).then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      })
+      .catch(error => {
+        setError(error)
+        handleMessage({ text: `Information of ${person.name} has already been removed from server`, type: 'error' })
+        setPersons(persons.filter(person => person.id !== id))
+      })
   }
 
   const handleNameChange = (event) => {
-      setNewName(event.target.value)
+    setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
@@ -91,8 +97,8 @@ const App = () => {
 
 
   const personsToShow = filteredResults
-  ? persons.filter(person => person.name.toLowerCase().includes(filteredResults.toLowerCase()) === true) 
-  : persons
+    ? persons.filter(person => person.name.toLowerCase().includes(filteredResults.toLowerCase()) === true)
+    : persons
 
   return (
     <div>
@@ -100,9 +106,9 @@ const App = () => {
       <Notification message={message} />
       <Filter inputText={filteredResults} filterUpdate={handleFiltering} />
       <h3>add a new</h3>
-      <PersonForm add={addPerson} 
-      inputName={newName} nameUpdate={handleNameChange} 
-      inputNum={newNumber} numUpdate={handleNumberChange} />
+      <PersonForm add={addPerson}
+        inputName={newName} nameUpdate={handleNameChange}
+        inputNum={newNumber} numUpdate={handleNumberChange} />
       <h3>Numbers</h3>
       <Persons persons={personsToShow} removePerson={removePerson} err={error} />
     </div>
