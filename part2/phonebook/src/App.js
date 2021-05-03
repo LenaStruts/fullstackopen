@@ -44,6 +44,9 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(error => {
+          handleMessage({ text: `${error.response.data.error}`, type: 'error' })
+        })
     }
   }
 
@@ -73,8 +76,7 @@ const App = () => {
       })
       .catch(error => {
         setError(error)
-        handleMessage({ text: `Information of ${person.name} has already been removed from server`, type: 'error' })
-        setPersons(persons.filter(person => person.id !== id))
+        handleMessage({ text: `${error.response.data.error}`, type: 'error' })
       })
   }
 
@@ -92,7 +94,7 @@ const App = () => {
 
   const handleMessage = (message) => {
     setMessage(message)
-    setTimeout(() => setMessage(null), 2000)
+    setTimeout(() => setMessage(null), 5000)
   }
 
 
